@@ -2,20 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 using TMPro;
 
-public enum State { START, HELP, GAME, CHOOSE, END }
+public enum State { START, HELP, LOBBY, GAME, CHOOSE, RESULTS, END, LOADING }
 public class MGR : MonoBehaviour
 {
     static public MGR SMGR;
-    private State gameState;
+    [SerializeField] private State gameState;
 
     //Input management
     private int xIn, yIn;
-    private Camera Cam;
+    public Camera Cam;
     private Vector2 mousePos;
 
     public GameObject[] bulletREF;
+    //public GameObject spawnerPF;
     public Spawner_SCR[] spawners;
 
     public GameObject enemy1, enemy2;
@@ -23,10 +26,11 @@ public class MGR : MonoBehaviour
 
     //Stores player during gameplay
     public Player_SCR player;
+    public Player_Mini player_m;
     public int roundCounter;
 
     //UI & Buttons
-    public Button BT_Start, BT_Help, BT_Choose1, BT_Choose2, BT_Choose3;
+    public Button BT_Start, BT_Start2, BT_Help, BT_Choose1, BT_Choose2, BT_Choose3;
     private PaintButtons PB_1, PB_2, PB_3;
     public Sprite Gun1, Gun2, Gun3;
     public CanvasGroup CG_Start, CG_Help, CG_Choose;
@@ -52,8 +56,13 @@ public class MGR : MonoBehaviour
         mousePos = Vector2.zero;
 
         //Connect buttons
-        BT_Start.onClick.AddListener(B_StartPress);
+        BT_Start.onClick.AddListener(() => B_StartPress(1));
+        BT_Start2.onClick.AddListener(() => B_StartPress(0));
         BT_Help.onClick.AddListener(B_HelpPress);
+
+        BT_Choose1.onClick.AddListener(() => B_Choice(1));
+        BT_Choose2.onClick.AddListener(() => B_Choice(2));
+        BT_Choose3.onClick.AddListener(() => B_Choice(3));
 
         PB_1 = BT_Choose1.gameObject.GetComponent<PaintButtons>();
         PB_2 = BT_Choose2.gameObject.GetComponent<PaintButtons>();
@@ -78,7 +87,11 @@ public class MGR : MonoBehaviour
 
                 break;
             case State.HELP:
-                //Do nothing until the player clicks start again, moving to gameplay
+                //
+
+                break;
+            case State.LOBBY:
+                //
 
                 break;
             case State.GAME:
@@ -126,26 +139,38 @@ public class MGR : MonoBehaviour
                     //Swap state
                     gameState = State.HELP;
                 }
-                //Maybe include straight to game option?
-                break;
-            case State.HELP:
-                //If new state is "choose," game is about to start - initialize!
-                if (newState == State.CHOOSE)
+                else if (newState == State.LOBBY)
                 {
-                    //Hide help menu - bring up weapon select menu
-                    SetCGActive(CG_Help, false);
-                    SetCGActive(CG_Choose, true);
+                    //Hide start menu & start the game
+                    SetCGActive(CG_Start, false);
 
-                    //Initialize Gameplay
-                    NewGame();
+                    //Enable Player
+                    player_m.playing = true;
 
                     //Swap state
-                    gameState = State.CHOOSE;
+                    gameState = State.LOBBY;
+                }
+                //Maybe include straight to game option?
+                break;
+            case State.LOBBY:
+                //Moving from lobby to gameplay scene
+                if (newState == State.LOADING)
+                {
+                    StartCoroutine(LoadNewScene(1));
+
+                    //Swap state
+                    gameState = State.LOADING;
                 }
                 break;
-            case State.GAME:
-                
+            case State.HELP:
+                //Hide help menu & show start menu again
+                SetCGActive(CG_Start, true);
+                SetCGActive(CG_Help, false);
 
+                //Swap state
+                gameState = State.START;
+                break;
+            case State.GAME:
 
                 break;
             case State.CHOOSE:
@@ -167,6 +192,20 @@ public class MGR : MonoBehaviour
             case State.END:
                 //Do nothing until the player clicks start, or the start option is chosen
 
+                break;
+            case State.LOADING:
+                //If loading gameplay, initialize gameplay upon loading in
+                if (newState == State.CHOOSE)
+                {
+                    //Show choices
+                    SetCGActive(CG_Choose, true);
+
+                    //Initialize Gameplay
+                    NewGame();
+
+                    //Swap state
+                    gameState = State.CHOOSE;
+                }
                 break;
         }
     }
@@ -249,19 +288,51 @@ public class MGR : MonoBehaviour
         cg.blocksRaycasts = a;
     }
 
-    public void B_StartPress()
+    public void MoveScenes(int X)
     {
-        ChangeState(State.HELP);
+        //If X = 1, we want to move to the gameplay scene (from the lobby)
+        if (X == 1)
+            ChangeState(State.LOADING);
+        //else if X == 0, we want to go to the islands scene (from gameplay, maybe from end too)
+        //Those cases are handled differently, but the change state logic will differentiate them!
+        else if (X == 0)
+            ChangeState(State.LOADING);
+        //But if X == 2, we want to go to the end (also from gameplay)
+        //HANDLE THIS TRANSITION HERE! Start the load scene from here.
     }
 
-    public void B_HelpPress()
+    public void AddInvocation(string X, UnityEvent Y)
     {
-        ChangeState(State.CHOOSE);
+        switch (X)
+        {
+            case "TO_TEMPLE":
+                Y.RemoveAllListeners();
+                Y.AddListener(() => MoveScenes(1));
+                break;
+        }
     }
 
     public void EnemyDown()
     {
         enemyCounter--;
+    }
+
+    private IEnumerator LoadNewScene(int X)
+    {
+        //0 = load islands; 1 = load game scene; 2 = load end scene
+
+        int loadOp = X;
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(X);
+
+        while(!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+
+        if (loadOp == 1)
+            ChangeState(State.CHOOSE);
+        else if(loadOp == 0)
+            ChangeState(State.LOBBY);
     }
 
     public void B_Choice(int C)
@@ -291,5 +362,18 @@ public class MGR : MonoBehaviour
         {
             Debug.Log("Button pressed??");
         }
+    }
+    
+    public void B_StartPress(int X)
+    {
+        if (X == 0)
+            ChangeState(State.HELP);
+        else if (X == 1)
+            ChangeState(State.LOBBY);
+    }
+
+    public void B_HelpPress()
+    {
+        ChangeState(State.START);
     }
 }

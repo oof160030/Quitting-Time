@@ -1507,7 +1507,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &584014836
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2964,13 +2964,14 @@ GameObject:
   - component: {fileID: 1362868206}
   - component: {fileID: 1362868205}
   - component: {fileID: 1362868204}
+  - component: {fileID: 1362868208}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1362868204
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3057,6 +3058,46 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1362868208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362868203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec0c2fd2f7659f04581f82c7b81c2f83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameState: 0
+  bulletREF:
+  - {fileID: 3489442481396057957, guid: 7d239466ce5f52143aefe9b1db4edcb4, type: 3}
+  spawners:
+  - {fileID: 1531131536}
+  - {fileID: 625148102}
+  - {fileID: 946657639}
+  - {fileID: 976383973}
+  - {fileID: 127860722}
+  - {fileID: 508587091}
+  - {fileID: 200353194}
+  enemy1: {fileID: 408509166616091732, guid: 71f60e28dde8b9e48a5591bc587a8573, type: 3}
+  enemy2: {fileID: 4365016535373388423, guid: 350b25a611bac0d4f94cd420a42f052a, type: 3}
+  player: {fileID: 0}
+  player_m: {fileID: 0}
+  roundCounter: 0
+  BT_Start: {fileID: 2092309228}
+  BT_Start2: {fileID: 0}
+  BT_Help: {fileID: 418855}
+  BT_Choose1: {fileID: 1495387855}
+  BT_Choose2: {fileID: 1455699956}
+  BT_Choose3: {fileID: 1526801847}
+  Gun1: {fileID: 21300000, guid: ac64acfac4f5b6b4182425f7e04d5d04, type: 3}
+  Gun2: {fileID: 21300000, guid: ac64acfac4f5b6b4182425f7e04d5d04, type: 3}
+  Gun3: {fileID: 21300000, guid: ac64acfac4f5b6b4182425f7e04d5d04, type: 3}
+  CG_Start: {fileID: 584014839}
+  CG_Help: {fileID: 1817741365}
+  CG_Choose: {fileID: 1279528668}
 --- !u!1 &1423178101
 GameObject:
   m_ObjectHideFlags: 0
@@ -3955,7 +3996,7 @@ Transform:
   m_GameObject: {fileID: 1582239060}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.82, y: -1.42, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4024,7 +4065,7 @@ GameObject:
   m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1643612159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4037,6 +4078,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec0c2fd2f7659f04581f82c7b81c2f83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameState: 0
   bulletREF:
   - {fileID: 3489442481396057957, guid: 7d239466ce5f52143aefe9b1db4edcb4, type: 3}
   spawners:
@@ -4050,8 +4092,10 @@ MonoBehaviour:
   enemy1: {fileID: 408509166616091732, guid: 71f60e28dde8b9e48a5591bc587a8573, type: 3}
   enemy2: {fileID: 4365016535373388423, guid: 350b25a611bac0d4f94cd420a42f052a, type: 3}
   player: {fileID: 0}
+  player_m: {fileID: 0}
   roundCounter: 0
   BT_Start: {fileID: 2092309228}
+  BT_Start2: {fileID: 0}
   BT_Help: {fileID: 418855}
   BT_Choose1: {fileID: 1495387855}
   BT_Choose2: {fileID: 1455699956}

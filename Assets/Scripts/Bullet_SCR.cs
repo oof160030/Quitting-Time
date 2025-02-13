@@ -15,6 +15,21 @@ public class Bullet_SCR : MonoBehaviour
     //Snake Stuff
     private bool snake;
 
+    //Rat stuff
+    private bool swarm;
+
+    //monkey stuff
+    private bool monkeyBounce;
+
+    //hog stuff
+    private bool hog;
+
+    //hog stuff
+    private bool hen;
+
+    //Tiger Stuff
+    public bool TigerParent, TigerChild;
+
     Coroutine B_Timer;
 
     private Rigidbody2D RB2;
@@ -62,6 +77,42 @@ public class Bullet_SCR : MonoBehaviour
         StartCoroutine(CheckTarget());
     }
 
+    public void FX_Rat()
+    {
+        swarm = true;
+        StartCoroutine(SpawnSwarm());
+    }
+
+    public void FX_Snake()
+    {
+        snake = true;
+    }
+
+    public void FX_Monkey()
+    {
+        monkeyBounce = true;
+    }
+
+    public void FX_Hog()
+    {
+        hog = true;
+    }
+
+    public void FX_Hen()
+    {
+        hen = true;
+    }
+
+    public void FX_Tiger()
+    {
+        TigerParent = true;
+    }
+    public void FX_TigerChild()
+    {
+        TigerChild = true;
+        TigerChain();
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -82,7 +133,7 @@ public class Bullet_SCR : MonoBehaviour
             //If you have no target, find one
             if(target == null && MGR.SMGR.Enemies.Count != 0)
             {
-                float dist = 4;
+                float dist = 5;
                 foreach(var X in MGR.SMGR.Enemies)
                 {
                     if((X.transform.position - transform.position).magnitude < dist)
@@ -98,13 +149,60 @@ public class Bullet_SCR : MonoBehaviour
                 RB2.linearVelocity = (target.transform.position - transform.position).normalized * b_speed;
             }
 
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+    private void TigerChain()
+    {
+        if (target != null && MGR.SMGR.Enemies.Count != 0)
+        {
+            Enemy_SCR hold = target;
+            float dist = 100;
+            foreach (var X in MGR.SMGR.Enemies)
+            {
+                if ((X.transform.position - transform.position).magnitude < dist && X != hold)
+                {
+                    dist = (X.transform.position - transform.position).magnitude;
+                    target = X;
+                }
+            }
+        }
+        else if (target == null && MGR.SMGR.Enemies.Count != 0)
+        {
+            float dist = 5;
+            foreach (var X in MGR.SMGR.Enemies)
+            {
+                if ((X.transform.position - transform.position).magnitude < dist)
+                {
+                    dist = (X.transform.position - transform.position).magnitude;
+                    target = X;
+                }
+            }
+        }
+        //Now, home in on your target
+        if (target != null)
+        {
+            RB2.linearVelocity = (target.transform.position - transform.position).normalized * b_speed;
         }
     }
 
     IEnumerator SpawnSwarm()
     {
-        yield return new WaitForSeconds(0.2f);
+        Vector3 AimDir;
+
+        while (swarm)
+        {
+            AimDir = RB2.linearVelocity.normalized;
+
+            Bullet_SCR tempB = Instantiate(MGR.SMGR.bulletREF[6], transform.position, Quaternion.identity).GetComponent<Bullet_SCR>();
+            tempB.INIT(new Vector3(-AimDir.y, AimDir.x));
+
+            Bullet_SCR tempB2 = Instantiate(MGR.SMGR.bulletREF[6], transform.position, Quaternion.identity).GetComponent<Bullet_SCR>();
+            tempB2.INIT(new Vector3(AimDir.y, -AimDir.x));
+
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
     /*
@@ -131,7 +229,28 @@ public class Bullet_SCR : MonoBehaviour
         //If colliding with a wall, destroy the projectile
         if (collision.gameObject.CompareTag("Wall"))
         {
-            B_Death(1);
+            if(!monkeyBounce)
+                B_Death(1);
+            else
+            {
+                monkeyBounce = false;
+                birthTime = Time.deltaTime;
+
+                StopCoroutine(B_Timer);
+
+                b_lifespan = 3.0f * b_lifespan;
+
+                B_Timer = StartCoroutine(B_Lifespan(b_lifespan));
+
+                if (collision.gameObject.transform.position.x == 0)
+                {
+                    RB2.linearVelocityY = -RB2.linearVelocityY;
+                }
+                else
+                {
+                    RB2.linearVelocityX = -RB2.linearVelocityX;
+                }
+            }
         }
         else if (collision.gameObject.CompareTag("Enemy") && friendly)
         {
@@ -145,7 +264,11 @@ public class Bullet_SCR : MonoBehaviour
                 temp_E.Damage(b_damage * CalculateRamping() * b_damageMod);
                 //If bullet toughness is expended, destroy the bullet.
                 if (b_toughness > 0)
+                {
                     b_toughness--;
+                    if (TigerChild)
+                        TigerChain();
+                }
                 else
                     B_Death(2);
             } 
@@ -171,6 +294,23 @@ public class Bullet_SCR : MonoBehaviour
     private void B_Death(int hitCode)
     {
         //0 = miss, 1 = wall, 2 = enemy, -1 = player
+        if(hog)
+        {
+            Bullet_SCR tempC = Instantiate(MGR.SMGR.bulletREF[7], transform.position, Quaternion.identity).GetComponent<Bullet_SCR>();
+            tempC.INIT(Vector3.zero);
+        }
+        if (hen && hitCode == 0)
+        {
+            Bullet_SCR tempC = Instantiate(MGR.SMGR.bulletREF[8], transform.position, Quaternion.identity).GetComponent<Bullet_SCR>();
+            tempC.INIT(Vector3.zero);
+        }
+        if (TigerParent && hitCode == 2)
+        {
+            
+            Bullet_SCR tempC = Instantiate(MGR.SMGR.bulletREF[9], transform.position, Quaternion.identity).GetComponent<Bullet_SCR>();
+            tempC.INIT(Vector3.zero);
+            tempC.FX_TigerChild();
+        }
         Destroy(gameObject);
         StopAllCoroutines();
     }

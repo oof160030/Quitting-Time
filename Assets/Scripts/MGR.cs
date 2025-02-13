@@ -28,7 +28,7 @@ public class MGR : MonoBehaviour
     /// </summary>
     public Spawner_SCR[] spawners;
 
-    public GameObject enemy1, enemy2;
+    public GameObject enemy1, enemy2, enemy3;
     private int enemyCounter;
 
     //Stores player during gameplay
@@ -82,6 +82,8 @@ public class MGR : MonoBehaviour
         PB_2 = BT_Choose2.gameObject.GetComponent<PaintButtons>();
         PB_3 = BT_Choose3.gameObject.GetComponent<PaintButtons>();
 
+        Enemies = new HashSet<Enemy_SCR>();
+
         //spawners[0].StartSpawning(enemy1, 5, enemy2, 9, 0.7f);
     }
 
@@ -130,40 +132,7 @@ public class MGR : MonoBehaviour
                         //Switch State
                         ChangeState(State.CHOOSE);
                     }
-                    else if(roundCounter == 7)
-                    {
-                        //Generate upgrade choices for the other kinds of upgrades (WIP)
-                        if(player.Fire_Upgrade == (Upgrade)12)
-                        {
-                            int excluded = Random.Range(0, 4);
-                            Choice1 = (Upgrade)(excluded % 4);
-                            Choice2 = (Upgrade)((excluded+1) % 4);
-                            Choice3 = (Upgrade)((excluded + 2) % 4);
-                        }
-                        else if(player.Travel_Upgrade == (Upgrade)12)
-                        {
-                            int excluded = Random.Range(0, 4);
-                            Choice1 = (Upgrade)(4+ (excluded % 4));
-                            Choice2 = (Upgrade)(4 + ((excluded + 1) % 4));
-                            Choice3 = (Upgrade)(4 + ((excluded + 2) % 4));
-                        }
-                        else if (player.Hit_Upgrade == (Upgrade)12)
-                        {
-                            int excluded = Random.Range(0, 4);
-                            Choice1 = (Upgrade)(8 + (excluded % 4));
-                            Choice2 = (Upgrade)(8 + ((excluded + 1) % 4));
-                            Choice3 = (Upgrade)(8 + ((excluded + 2) % 4));
-                        }
-
-                        //Update the buttons
-                        PB_1.UpdateButtons(weaponUpgrades[(int)Choice1]);
-                        PB_2.UpdateButtons(weaponUpgrades[(int)Choice2]);
-                        PB_3.UpdateButtons(weaponUpgrades[(int)Choice3]);
-
-                        //Switch State
-                        ChangeState(State.CHOOSE);
-                    }
-                    else if (roundCounter == 10)
+                    else if (roundCounter == 7)
                     {
                         //Generate upgrade choices for the other kinds of upgrades (WIP)
                         if (player.Fire_Upgrade != (Upgrade)12)
@@ -189,6 +158,39 @@ public class MGR : MonoBehaviour
                             Choice3 = (Upgrade)Random.Range(0, 8);
                             while (Choice3 == Choice1 || Choice3 == Choice2)
                                 Choice3 = (Upgrade)Random.Range(0, 8);
+                        }
+
+                        //Update the buttons
+                        PB_1.UpdateButtons(weaponUpgrades[(int)Choice1]);
+                        PB_2.UpdateButtons(weaponUpgrades[(int)Choice2]);
+                        PB_3.UpdateButtons(weaponUpgrades[(int)Choice3]);
+
+                        //Switch State
+                        ChangeState(State.CHOOSE);
+                    }
+                    else if(roundCounter == 10)
+                    {
+                        //Generate upgrade choices for the other kinds of upgrades (WIP)
+                        if(player.Fire_Upgrade == (Upgrade)12)
+                        {
+                            int excluded = Random.Range(0, 4);
+                            Choice1 = (Upgrade)(excluded % 4);
+                            Choice2 = (Upgrade)((excluded+1) % 4);
+                            Choice3 = (Upgrade)((excluded + 2) % 4);
+                        }
+                        else if(player.Travel_Upgrade == (Upgrade)12)
+                        {
+                            int excluded = Random.Range(0, 4);
+                            Choice1 = (Upgrade)(4 + (excluded % 4));
+                            Choice2 = (Upgrade)(4 + ((excluded + 1) % 4));
+                            Choice3 = (Upgrade)(4 + ((excluded + 2) % 4));
+                        }
+                        else if (player.Hit_Upgrade == (Upgrade)12)
+                        {
+                            int excluded = Random.Range(0, 4);
+                            Choice1 = (Upgrade)(8 + (excluded % 4));
+                            Choice2 = (Upgrade)(8 + ((excluded + 1) % 4));
+                            Choice3 = (Upgrade)(8 + ((excluded + 2) % 4));
                         }
 
                         //Update the buttons
@@ -395,28 +397,53 @@ public class MGR : MonoBehaviour
                 spawners[6].StartSpawning(enemy1, 4, enemy2, 4, 0.7f);
                 break;
             case 4:
-                enemyCounter = 32;
-                spawners[0].StartSpawning(enemy1, 4, enemy2, 4, 0.7f);
-                spawners[1].StartSpawning(enemy1, 4, enemy2, 4, 0.7f);
-                spawners[5].StartSpawning(enemy1, 4, enemy2, 4, 0.7f);
-                spawners[6].StartSpawning(enemy1, 4, enemy2, 4, 0.7f);
+                enemyCounter = 12;
+                spawners[0].StartSpawning(enemy1, 4, 0.7f);
+                spawners[1].StartSpawning(enemy1, 4, 0.7f);
+                spawners[5].StartSpawning(enemy3, 2, 0.7f);
+                spawners[6].StartSpawning(enemy3, 2, 0.7f);
                 break;
             case 5:
-                enemyCounter = 32;
-                spawners[0].StartSpawning(enemy1, 4, enemy2, 4, 0.7f);
-                spawners[1].StartSpawning(enemy1, 4, enemy2, 4, 0.7f);
-                spawners[5].StartSpawning(enemy1, 4, enemy2, 4, 0.7f);
-                spawners[6].StartSpawning(enemy1, 4, enemy2, 4, 0.7f);
+                enemyCounter = 26;
+                spawners[0].StartSpawning(enemy3, 1, enemy2, 4, 0.7f);
+                spawners[1].StartSpawning(enemy2, 4, enemy2, 4, 0.7f);
+                spawners[5].StartSpawning(enemy3, 1, enemy2, 4, 0.7f);
+                spawners[6].StartSpawning(enemy2, 4, enemy2, 4, 0.7f);
                 break;
             case 6:
+                enemyCounter = 12;
+                spawners[0].StartSpawning(enemy3, 3, 0.7f);
+                spawners[1].StartSpawning(enemy3, 3, 0.7f);
+                spawners[5].StartSpawning(enemy3, 3, 0.7f);
+                spawners[6].StartSpawning(enemy3, 3, 0.7f);
                 break;
             case 7:
+                enemyCounter = 16;
+                spawners[0].StartSpawning(enemy1, 4, 0.7f);
+                spawners[1].StartSpawning(enemy1, 4, 0.7f);
+                spawners[5].StartSpawning(enemy1, 4, 0.7f);
+                spawners[6].StartSpawning(enemy1, 4, 0.7f);
                 break;
             case 8:
+                enemyCounter = 16;
+                spawners[0].StartSpawning(enemy1, 4, 0.7f);
+                spawners[1].StartSpawning(enemy1, 4, 0.7f);
+                spawners[5].StartSpawning(enemy1, 4, 0.7f);
+                spawners[6].StartSpawning(enemy1, 4, 0.7f);
                 break;
             case 9:
+                enemyCounter = 16;
+                spawners[0].StartSpawning(enemy1, 4, 0.7f);
+                spawners[1].StartSpawning(enemy1, 4, 0.7f);
+                spawners[5].StartSpawning(enemy1, 4, 0.7f);
+                spawners[6].StartSpawning(enemy1, 4, 0.7f);
                 break;
             default:
+                enemyCounter = 16;
+                spawners[0].StartSpawning(enemy1, 4, 0.7f);
+                spawners[1].StartSpawning(enemy1, 4, 0.7f);
+                spawners[5].StartSpawning(enemy1, 4, 0.7f);
+                spawners[6].StartSpawning(enemy1, 4, 0.7f);
                 break;
         }
     }
@@ -550,6 +577,15 @@ public class MGR : MonoBehaviour
         }
     }
     
+    public void AddEnemyCache(Enemy_SCR E)
+    {
+        Enemies.Add(E);
+    }
+    public void RemoveEnemyCache(Enemy_SCR E)
+    {
+        Enemies.Remove(E);
+    }
+
     public void B_StartPress(int X)
     {
         if (X == 0)

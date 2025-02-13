@@ -34,7 +34,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4817368989440554488, guid: 7d239466ce5f52143aefe9b1db4edcb4, type: 3}
       propertyPath: b_rampMin
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 4817368989440554488, guid: 7d239466ce5f52143aefe9b1db4edcb4, type: 3}
       propertyPath: b_lifespan

@@ -19,7 +19,7 @@ public class Enemy_SCR : MonoBehaviour
     {
         RB2 = gameObject.GetComponent<Rigidbody2D>();
         SMGR = MGR.SMGR;
-        SMGR.Enemies.Add(this);
+        SMGR.AddEnemyCache(this);
     }
 
     // Update is called once per frame
@@ -56,7 +56,7 @@ public class Enemy_SCR : MonoBehaviour
     protected virtual void Die()
     {
         Destroy(gameObject);
-        SMGR.Enemies.Remove(this);
+        SMGR.RemoveEnemyCache(this);
         SMGR.EnemyDown();
         //Plus other inherited effects
     }

@@ -114,6 +114,27 @@ public class Player_SCR : MonoBehaviour
 
             else if (Travel_Upgrade == Upgrade.DOG)
                 tempB.FX_Hound();
+
+            else if (Travel_Upgrade == Upgrade.RAT)
+                tempB.FX_Rat();
+
+            else if (Travel_Upgrade == Upgrade.OX)
+                tempB.FX_Ox();
+
+            else if (Travel_Upgrade == Upgrade.SNAKE)
+                tempB.FX_Snake();
+
+            else if (Hit_Upgrade == Upgrade.MONKEY)
+                tempB.FX_Monkey();
+
+            else if (Hit_Upgrade == Upgrade.ROOSTER)
+                tempB.FX_Hen();
+
+            else if (Hit_Upgrade == Upgrade.TIGER)
+                tempB.FX_Tiger();
+
+            else if (Hit_Upgrade == Upgrade.PIG)
+                tempB.FX_Hog();
         }
         else
         {
@@ -133,6 +154,34 @@ public class Player_SCR : MonoBehaviour
             else if (Travel_Upgrade == Upgrade.DOG)
             {
                 tempB.FX_Hound(); tempB2.FX_Hound();
+            }
+            else if (Travel_Upgrade == Upgrade.RAT)
+            {
+                tempB.FX_Rat(); tempB2.FX_Rat();
+            }
+            else if (Travel_Upgrade == Upgrade.OX)
+            {
+                tempB.FX_Ox(); tempB2.FX_Ox();
+            }
+            else if (Travel_Upgrade == Upgrade.SNAKE)
+            {
+                tempB.FX_Snake(); tempB2.FX_Snake();
+            }
+            else if (Hit_Upgrade == Upgrade.MONKEY)
+            {
+                tempB.FX_Monkey(); tempB2.FX_Monkey();
+            }
+            else if (Hit_Upgrade == Upgrade.ROOSTER)
+            {
+                tempB.FX_Hen(); tempB2.FX_Hen();
+            }
+            else if (Hit_Upgrade == Upgrade.TIGER)
+            {
+                tempB.FX_Tiger(); tempB2.FX_Tiger();
+            }
+            else if (Hit_Upgrade == Upgrade.PIG)
+            {
+                tempB.FX_Hog(); tempB2.FX_Hog();
             }
         }
 

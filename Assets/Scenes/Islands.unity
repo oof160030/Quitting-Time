@@ -6039,6 +6039,10 @@ MonoBehaviour:
   - {fileID: 6281449891425779733, guid: 69983ef5964d9a44fa4732c58fb51667, type: 3}
   - {fileID: 7358499916401720892, guid: 215aad977bb4f19449a78d1491957926, type: 3}
   - {fileID: 6117496443488241740, guid: a66218718f01df94dbe0f174364d65f5, type: 3}
+  - {fileID: 8171671033956346493, guid: de9cd541659d45041975a78ebaafa823, type: 3}
+  - {fileID: 288292640982503727, guid: d1dbfe37ff2578242918c06bb11a04eb, type: 3}
+  - {fileID: 5457933328116116337, guid: 4382832209cdc8b45a4de4c930cb6b5f, type: 3}
+  - {fileID: 4942762127875279733, guid: 488264f46b496e644be72d8f38893b0e, type: 3}
   spawners:
   - {fileID: 0}
   - {fileID: 0}
@@ -6049,6 +6053,7 @@ MonoBehaviour:
   - {fileID: 0}
   enemy1: {fileID: 408509166616091732, guid: 71f60e28dde8b9e48a5591bc587a8573, type: 3}
   enemy2: {fileID: 4365016535373388423, guid: 350b25a611bac0d4f94cd420a42f052a, type: 3}
+  enemy3: {fileID: 6288548857672558438, guid: be1860ab93d747a4da20ed74b1511461, type: 3}
   player: {fileID: 0}
   player_m: {fileID: 0}
   roundCounter: 0

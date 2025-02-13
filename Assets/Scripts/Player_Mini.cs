@@ -17,7 +17,7 @@ public class Player_Mini : MonoBehaviour
         RB2 = GetComponent<Rigidbody2D>();
         SMGR = MGR.SMGR;
 
-        SMGR.player_m = this;
+        SMGR.ConnectMini(this);
     }
 
     // Update is called once per frame

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 716458827004228062}
   - component: {fileID: 5684724521328783759}
   - component: {fileID: 5210491188350317495}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Test Foe
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -98,7 +98,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 408509166616091732}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -112,7 +112,7 @@ Rigidbody2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -176,7 +176,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vulnerable: 1
-  health: 10
+  health: 4
   touchDamage: 0
   moveSpeed: 3
   accellerates: 0

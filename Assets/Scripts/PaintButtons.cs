@@ -13,4 +13,11 @@ public class PaintButtons : MonoBehaviour
         Field2.text = T2;
         Icon.sprite = I;
     }
+
+    public void UpdateButtons(Upgrade_Data UD)
+    {
+        Field1.text = UD.Upgrade_Name;
+        Field2.text = UD.Upgrade_Description;
+        Icon.sprite = UD.Upgrade_Icon;
+    }
 }

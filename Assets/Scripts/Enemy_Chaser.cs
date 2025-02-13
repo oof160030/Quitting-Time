@@ -6,10 +6,9 @@ public class Enemy_Chaser : Enemy_SCR
     
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    protected override void Start()
     {
-        RB2 = gameObject.GetComponent<Rigidbody2D>();
-        SMGR = MGR.SMGR;
+        base.Start();
     }
 
     // Update is called once per frame
@@ -26,6 +25,10 @@ public class Enemy_Chaser : Enemy_SCR
         if(accellerates == false)
             RB2.linearVelocity = (SMGR.player.transform.position - transform.position).normalized * moveSpeed;
         else
+        {
             RB2.linearVelocity = RB2.linearVelocity + (Vector2)((SMGR.player.transform.position - transform.position).normalized * (accell_Rate * Time.deltaTime));
+            RB2.linearVelocity = RB2.linearVelocity.normalized * Mathf.Clamp(RB2.linearVelocity.magnitude, 0, moveSpeed);
+        }
+            
     }
 }

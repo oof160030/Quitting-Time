@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9afc69250c95994d908ce743e70cd7d, type: 3}
+  m_Name: 09_Monkey
+  m_EditorClassIdentifier: 
+  Upgrade_Icon: {fileID: 1934097582247940632, guid: adf4d71a35409954085a82eef9e836cd, type: 3}
+  Upgrade_Name: Leaping Monkey
+  Upgrade_Description: Bullets bounce off a single wall, then travel 3x further.

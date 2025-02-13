@@ -18,7 +18,14 @@ public class MGR : MonoBehaviour
     private Vector2 mousePos;
 
     public GameObject[] bulletREF;
-    //public GameObject spawnerPF;
+    /// <summary>
+    /// 0: Prototype Bullet
+    /// 1: Rifle Bullet
+    /// 2: Shotgun Bullet
+    /// 3: Sniper Bullet
+    /// 4: Dragon Sub-Bullet
+    /// 5: Goat Glare Bullet
+    /// </summary>
     public Spawner_SCR[] spawners;
 
     public GameObject enemy1, enemy2;
@@ -33,12 +40,19 @@ public class MGR : MonoBehaviour
     public Button BT_Start, BT_Start2, BT_Help, BT_Choose1, BT_Choose2, BT_Choose3;
     private PaintButtons PB_1, PB_2, PB_3;
     public Sprite Gun1, Gun2, Gun3;
-    public CanvasGroup CG_Start, CG_Help, CG_Choose;
+    public CanvasGroup CG_Start, CG_Help, CG_Choose, CG_Results, CG_Talk;
+    public TextMeshProUGUI TXT_EnemyCounter, TXT_LifeCounter;
+
+    private Upgrade Choice1, Choice2, Choice3;
+    public Upgrade_Data[] weaponUpgrades;
+
+    //Enemy tracker
+    public HashSet<Enemy_SCR> Enemies;
 
     private void Awake()
     {
         if(SMGR != this && SMGR != null)
-            Destroy(this);
+            Destroy(gameObject);
         else
         {
             SMGR = this;
@@ -100,9 +114,89 @@ public class MGR : MonoBehaviour
                 {
                     //Congrats! Round num increases
                     roundCounter++;
-                    //On specific rounds, move to choice instead of game again
-                    if(roundCounter == 4 || roundCounter == 7 || roundCounter == 10)
+                    //On Round 4, generate one upgrade option from each category
+                    if(roundCounter == 4)
                     {
+                        //Generate upgrade choices
+                        Choice1 = (Upgrade)Random.Range(0, 4);
+                        Choice2 = (Upgrade)Random.Range(4, 8);
+                        Choice3 = (Upgrade)Random.Range(8, 12);
+
+                        //Update the buttons
+                        PB_1.UpdateButtons(weaponUpgrades[(int)Choice1]);
+                        PB_2.UpdateButtons(weaponUpgrades[(int)Choice2]);
+                        PB_3.UpdateButtons(weaponUpgrades[(int)Choice3]);
+
+                        //Switch State
+                        ChangeState(State.CHOOSE);
+                    }
+                    else if(roundCounter == 7)
+                    {
+                        //Generate upgrade choices for the other kinds of upgrades (WIP)
+                        if(player.Fire_Upgrade == (Upgrade)12)
+                        {
+                            int excluded = Random.Range(0, 4);
+                            Choice1 = (Upgrade)(excluded % 4);
+                            Choice2 = (Upgrade)((excluded+1) % 4);
+                            Choice3 = (Upgrade)((excluded + 2) % 4);
+                        }
+                        else if(player.Travel_Upgrade == (Upgrade)12)
+                        {
+                            int excluded = Random.Range(0, 4);
+                            Choice1 = (Upgrade)(4+ (excluded % 4));
+                            Choice2 = (Upgrade)(4 + ((excluded + 1) % 4));
+                            Choice3 = (Upgrade)(4 + ((excluded + 2) % 4));
+                        }
+                        else if (player.Hit_Upgrade == (Upgrade)12)
+                        {
+                            int excluded = Random.Range(0, 4);
+                            Choice1 = (Upgrade)(8 + (excluded % 4));
+                            Choice2 = (Upgrade)(8 + ((excluded + 1) % 4));
+                            Choice3 = (Upgrade)(8 + ((excluded + 2) % 4));
+                        }
+
+                        //Update the buttons
+                        PB_1.UpdateButtons(weaponUpgrades[(int)Choice1]);
+                        PB_2.UpdateButtons(weaponUpgrades[(int)Choice2]);
+                        PB_3.UpdateButtons(weaponUpgrades[(int)Choice3]);
+
+                        //Switch State
+                        ChangeState(State.CHOOSE);
+                    }
+                    else if (roundCounter == 10)
+                    {
+                        //Generate upgrade choices for the other kinds of upgrades (WIP)
+                        if (player.Fire_Upgrade != (Upgrade)12)
+                        {
+                            Choice1 = (Upgrade)Random.Range(4, 8);
+                            Choice2 = (Upgrade)Random.Range(8, 12);
+                            Choice3 = (Upgrade)Random.Range(4, 12);
+                            while (Choice3 == Choice1 || Choice3 == Choice2)
+                                Choice3 = (Upgrade)Random.Range(4, 12);
+                        }
+                        else if (player.Travel_Upgrade != (Upgrade)12)
+                        {
+                            Choice1 = (Upgrade)Random.Range(0, 4);
+                            Choice2 = (Upgrade)Random.Range(8, 12);
+                            Choice3 = (Upgrade)(Random.Range(0, 4) + (8 * Random.Range(0, 2)));
+                            while (Choice3 == Choice1 || Choice3 == Choice2)
+                                Choice3 = (Upgrade)(Random.Range(0, 4) + (8 * Random.Range(0, 2)));
+                        }
+                        else if (player.Hit_Upgrade != (Upgrade)12)
+                        {
+                            Choice1 = (Upgrade)Random.Range(0, 4);
+                            Choice2 = (Upgrade)Random.Range(4, 8);
+                            Choice3 = (Upgrade)Random.Range(0, 8);
+                            while (Choice3 == Choice1 || Choice3 == Choice2)
+                                Choice3 = (Upgrade)Random.Range(0, 8);
+                        }
+
+                        //Update the buttons
+                        PB_1.UpdateButtons(weaponUpgrades[(int)Choice1]);
+                        PB_2.UpdateButtons(weaponUpgrades[(int)Choice2]);
+                        PB_3.UpdateButtons(weaponUpgrades[(int)Choice3]);
+
+                        //Switch State
                         ChangeState(State.CHOOSE);
                     }
                     //else, spawn the next wave
@@ -114,6 +208,10 @@ public class MGR : MonoBehaviour
                 break;
             case State.CHOOSE:
                 //Do nothing until the player clicks start, or the start option is chosen
+
+                break;
+            case State.RESULTS:
+                //Do nothing until the player clicks the retry button
 
                 break;
             case State.END:
@@ -163,15 +261,35 @@ public class MGR : MonoBehaviour
                 }
                 break;
             case State.HELP:
-                //Hide help menu & show start menu again
-                SetCGActive(CG_Start, true);
-                SetCGActive(CG_Help, false);
+                if (newState == State.START)
+                {
+                    //Hide help menu & show start menu again
+                    SetCGActive(CG_Start, true);
+                    SetCGActive(CG_Help, false);
 
-                //Swap state
-                gameState = State.START;
+                    //Swap state
+                    gameState = State.START;
+                }
                 break;
             case State.GAME:
+                if (newState == State.RESULTS)
+                {
+                    //Display the Results Screen
+                    SetCGActive(CG_Results, true);
 
+                    //Swap state
+                    gameState = State.RESULTS;
+                }
+                else if (newState == State.CHOOSE)
+                {
+                    //Display the Results Screen
+                    SetCGActive(CG_Choose, true);
+
+                    player.playing = false;
+
+                    //Swap state
+                    gameState = State.CHOOSE;
+                }
                 break;
             case State.CHOOSE:
                 //New state should be "Game" - set up next wave of enemies based on round count.
@@ -180,6 +298,9 @@ public class MGR : MonoBehaviour
                     //Hide help menu - bring up weapon select menu
                     SetCGActive(CG_Choose, false);
 
+                    //Player has control again
+                    player.playing = true;
+
                     //Start spawning enemies
                     //Set enemy counter to the number of enemies to spawn
                     //Then give spawning instructions to the spawners
@@ -187,6 +308,20 @@ public class MGR : MonoBehaviour
 
                     //Swap state
                     gameState = State.GAME;
+                }
+                break;
+            case State.RESULTS:
+                //Moving from gameplay to lobby scene
+                if (newState == State.LOADING)
+                {
+                    //Hide the Results Screen
+                    SetCGActive(CG_Results, false); 
+                    
+                    //Load the islands scene again
+                    StartCoroutine(LoadNewScene(0));
+
+                    //Swap state
+                    gameState = State.LOADING;
                 }
                 break;
             case State.END:
@@ -205,6 +340,16 @@ public class MGR : MonoBehaviour
 
                     //Swap state
                     gameState = State.CHOOSE;
+                }
+                //If loading gameplay, initialize gameplay upon loading in
+                else if (newState == State.LOBBY)
+                {
+                    //Enable Player
+                    if(player_m != null)
+                        player_m.playing = true;
+
+                    //Swap state
+                    gameState = State.LOBBY;
                 }
                 break;
         }
@@ -232,8 +377,8 @@ public class MGR : MonoBehaviour
                 enemyCounter = 16;
                 spawners[0].StartSpawning(enemy1, 4, 0.7f);
                 spawners[1].StartSpawning(enemy1, 4, 0.7f);
-                spawners[5].StartSpawning(enemy1, 4, 0.7f);
-                spawners[6].StartSpawning(enemy1, 4, 0.7f);
+                spawners[5].StartSpawning(enemy2, 4, 0.7f);
+                spawners[6].StartSpawning(enemy2, 4, 0.7f);
                 break;
             case 2:
                 enemyCounter = 16;
@@ -257,6 +402,11 @@ public class MGR : MonoBehaviour
                 spawners[6].StartSpawning(enemy1, 4, enemy2, 4, 0.7f);
                 break;
             case 5:
+                enemyCounter = 32;
+                spawners[0].StartSpawning(enemy1, 4, enemy2, 4, 0.7f);
+                spawners[1].StartSpawning(enemy1, 4, enemy2, 4, 0.7f);
+                spawners[5].StartSpawning(enemy1, 4, enemy2, 4, 0.7f);
+                spawners[6].StartSpawning(enemy1, 4, enemy2, 4, 0.7f);
                 break;
             case 6:
                 break;
@@ -301,6 +451,11 @@ public class MGR : MonoBehaviour
         //HANDLE THIS TRANSITION HERE! Start the load scene from here.
     }
 
+    public void ReceiveSpanwers(Spawner_SCR[] X)
+    {
+        spawners = X;
+    }
+
     public void AddInvocation(string X, UnityEvent Y)
     {
         switch (X)
@@ -315,6 +470,25 @@ public class MGR : MonoBehaviour
     public void EnemyDown()
     {
         enemyCounter--;
+        TXT_EnemyCounter.text = "Enemies: " + enemyCounter;
+    }
+
+    public void UpdateHP(int H)
+    {
+        TXT_LifeCounter.text = "Health: " + H;
+    }
+
+    public void PlayerDied()
+    {
+        ChangeState(State.RESULTS);
+    }
+
+    public void ConnectMini(Player_Mini PM)
+    {
+        player_m = PM;
+
+        if (gameState == State.LOBBY)
+            PM.playing = true;
     }
 
     private IEnumerator LoadNewScene(int X)
@@ -343,24 +517,36 @@ public class MGR : MonoBehaviour
             switch (C)
             {
                 case 1:
-                    player.weapon = WeaponType.TWIN;
+                    player.SetPlayerStats(WeaponType.TWIN, bulletREF[2], (1.0f/9.0f));
                     break;
                 case 2:
-                    player.weapon = WeaponType.MID;
+                    player.SetPlayerStats(WeaponType.MID, bulletREF[1], (1.0f/12.0f));
                     break;
                 case 3:
-                    player.weapon = WeaponType.LONG;
+                    player.SetPlayerStats(WeaponType.LONG, bulletREF[3], (1.0f/3.0f));
                     break;
             }
             //Free the player to move
             Debug.Log("Button pressed");
-            player.playing = true;
             ChangeState(State.GAME);
         }
         //Otherwise, choice represents upgrades - choose based on MGR stored upgrades, then switch state
         else
         {
+            switch (C)
+            {
+                case 1:
+                    player.ReceiveUpgrade(Choice1);
+                    break;
+                case 2:
+                    player.ReceiveUpgrade(Choice2);
+                    break;
+                case 3:
+                    player.ReceiveUpgrade(Choice3);
+                    break;
+            }
             Debug.Log("Button pressed??");
+            ChangeState(State.GAME);
         }
     }
     
@@ -375,5 +561,10 @@ public class MGR : MonoBehaviour
     public void B_HelpPress()
     {
         ChangeState(State.START);
+    }
+
+    public void B_ResultsPress()
+    {
+        MoveScenes(0);
     }
 }
